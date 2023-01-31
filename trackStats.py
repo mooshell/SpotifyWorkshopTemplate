@@ -32,10 +32,6 @@ class SpotifyAPI(object):
         self.client_id = client_id
         self.client_secret = client_secret
 
-    ############################
-    #  SET UP YOUR CREDENTIALS #
-    ############################
-
     def get_client_creds(self):
 
         """
@@ -44,22 +40,22 @@ class SpotifyAPI(object):
 
         client_id = self.client_id
         client_secret = self.client_secret
-
         # Ensuring client_id and client_secrets have values
         if client_secret == None or client_id == None:
             raise Exception("You must set client_id and client secret")
-
-        # INSERT: Auth String BEFORE encoding
-        auth_string = None
-
-        # auth_string is a string, but to encode the string using base64, we need to convert it into BYTES
-        # INSERT: Convert the String Into Bytes
-        auth_bytes = None
-        
-        # INSERT: Encode String in Base64
-        encoded_auth = None
+        # Auth String BEFORE encoding
+        auth_string = client_id + ":" + client_secret
+        # This is currently a string, but to encode the string using base64, we need to convert it into BYTES
+        # Convert the String Into Bytes
+        auth_bytes = auth_string.encode()
+        # Encode String in Base64
+        encoded_auth = base64.b64encode(auth_bytes)
 
         return encoded_auth.decode()
+
+    ############################
+    #   SET UP TOKEN HEADERS   #
+    ############################
 
     def get_token_header(self):
 
@@ -70,9 +66,12 @@ class SpotifyAPI(object):
         client_creds_b64 = self.get_client_creds()
 
         return {
-            "Authorization": "Basic " + client_creds_b64,
-            "Content-Type": "application/x-www-form-urlencoded"
+            # INSERT: TOKEN HEADERS    
         }
+    
+    ############################
+    #     SET UP TOKEN DATA    #
+    ############################
 
     def get_token_data(self):
 
@@ -81,7 +80,7 @@ class SpotifyAPI(object):
         """
 
         return {
-            "grant_type": "client_credentials"
+            # INSERT: TOKEN DATA  
         }
 
     ############################
@@ -110,12 +109,15 @@ class SpotifyAPI(object):
         # INSERT: Pulling Necessary Data from the Response
         now = datetime.datetime.now()
         data = response.json()
+        # INSERT: Access Token
         access_token = None
         self.access_token = access_token
+        # INSERT: Expires In
         expires_in = None
+        # INSERT: The time when the token will expire
         expires = None
         self.access_token_expires = expires
-        self.access_token_expired = None
+        self.access_token_expired = False
         
         return True
 
@@ -137,6 +139,10 @@ class SpotifyAPI(object):
             return self.get_access_token()
         return token
 
+    ###############################
+    #   SET UP RESOURCE HEADERS   #
+    ###############################
+
     def get_resource_header(self):
 
         """
@@ -146,8 +152,7 @@ class SpotifyAPI(object):
         access_token = self.get_access_token()
 
         headers = {
-            "Authorization" : "Bearer " + access_token,
-            "Content-Type": "application/json" 
+            #INSERT: RESOURCE HEADERS
         }
 
         return headers
@@ -155,6 +160,7 @@ class SpotifyAPI(object):
     #######################################################
     # Performing a Search Query Given A Track & An Artist #
     #######################################################
+
     def search(self, query=None, search_type='track'):
         """
             Returns the JSON response of an request made to the Search endpoint
@@ -199,7 +205,7 @@ class SpotifyAPI(object):
         headers = self.get_resource_header()
         
         # INSERT: The Endpoint we wish to Query
-        endpoint = "https://api.spotify.com/v1/audio-features/"
+        endpoint = None
         lookup_url = endpoint + str(_id)
 
         # INSERT: The GET Request
